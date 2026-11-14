@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
   FileCode2, 
-  Plus, 
   Eye, 
   Download, 
   MoreVertical,
@@ -115,16 +114,6 @@ export default function DocumentsView({
             <option value="2023">2023</option>
           </select>
         </div>
-
-        {!isRegistrar && (
-          <button 
-            className="btn-primary"
-            onClick={() => onNavigate('upload')}
-          >
-            <Plus size={18} />
-            Upload Document
-          </button>
-        )}
       </div>
 
       {/* Documents Table */}
