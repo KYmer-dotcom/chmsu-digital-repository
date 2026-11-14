@@ -206,6 +206,7 @@ export default function App() {
 
           {currentView === 'documents' && (
             <DocumentsView 
+              currentUser={currentUser}
               documents={documents}
               onNavigate={setCurrentView}
               onSelectDocument={setSelectedDocForModal}

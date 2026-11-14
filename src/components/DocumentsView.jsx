@@ -12,12 +12,14 @@ import {
 } from 'lucide-react';
 
 export default function DocumentsView({ 
+  currentUser,
   documents, 
   onNavigate, 
   onSelectDocument, 
   onDeleteDocument,
   showToast 
 }) {
+  const isRegistrar = currentUser?.role === 'Registrar';
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedType, setSelectedType] = useState('All');
   const [selectedYear, setSelectedYear] = useState('All');
@@ -32,6 +34,17 @@ export default function DocumentsView({
       case 'forms': return 'badge-forms';
       case 'plans': return 'badge-plans';
       default: return 'badge-others';
+    }
+  };
+
+  const getDocIconColor = (category) => {
+    switch (category?.toLowerCase()) {
+      case 'reports': return '#0284c7';
+      case 'policies': return '#0e8345';
+      case 'manuals': return '#8b5cf6';
+      case 'forms': return '#f43f5e';
+      case 'plans': return '#d97706';
+      default: return '#64748b';
     }
   };
 
@@ -103,13 +116,15 @@ export default function DocumentsView({
           </select>
         </div>
 
-        <button 
-          className="btn-primary"
-          onClick={() => onNavigate('upload')}
-        >
-          <Plus size={18} />
-          Upload Document
-        </button>
+        {!isRegistrar && (
+          <button 
+            className="btn-primary"
+            onClick={() => onNavigate('upload')}
+          >
+            <Plus size={18} />
+            Upload Document
+          </button>
+        )}
       </div>
 
       {/* Documents Table */}
@@ -135,7 +150,13 @@ export default function DocumentsView({
                       style={{ cursor: 'pointer' }}
                       onClick={() => onSelectDocument(doc)}
                     >
-                      <span className="pdf-badge">
+                      <span 
+                        className="pdf-badge"
+                        style={{ 
+                          backgroundColor: `${getDocIconColor(doc.category)}15`, 
+                          color: getDocIconColor(doc.category) 
+                        }}
+                      >
                         <FileCode2 size={16} />
                       </span>
                       <span>{doc.title}</span>
