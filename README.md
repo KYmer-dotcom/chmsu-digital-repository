@@ -58,3 +58,4 @@ The production-ready assets will be generated in the `dist/` directory.
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Visuals**: [Canvas Confetti](https://www.npmjs.com/package/canvas-confetti)
 - **Deployment**: GitHub Pages via GitHub Actions
+
