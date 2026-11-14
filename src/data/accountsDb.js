@@ -7,11 +7,11 @@ export const initialAccounts = [
     username: 'records',
     email: 'records@chmsu.edu.ph',
     password: 'admin123',
-    name: 'Records Management Officer',
+    name: 'Records Officer',
     role: 'Records Office',
     officeName: 'Records Management Office',
     department: 'University Archives & Records Section',
-    avatar: 'RM',
+    avatar: 'RO',
     canManageStorage: true,
     canProcessRequests: false
   },
@@ -20,11 +20,11 @@ export const initialAccounts = [
     username: 'registrar',
     email: 'registrar@chmsu.edu.ph',
     password: 'registrar123',
-    name: 'University Registrar Officer',
+    name: 'Registrar Officer',
     role: 'Registrar',
-    officeName: 'Office of the University Registrar',
+    officeName: 'Office of the Registrar',
     department: 'Student Academic Records & Admissions',
-    avatar: 'UR',
+    avatar: 'RO',
     canManageStorage: false,
     canProcessRequests: true
   },
@@ -34,11 +34,11 @@ export const initialAccounts = [
     username: 'admin',
     email: 'admin@chmsu.edu.ph',
     password: 'admin123',
-    name: 'Records Administrator',
+    name: 'Records Officer',
     role: 'Records Office',
     officeName: 'Records Management Office',
-    department: 'Management Information System / Records',
-    avatar: 'AD',
+    department: 'University Archives & Records Section',
+    avatar: 'RO',
     canManageStorage: true,
     canProcessRequests: false
   }
@@ -117,7 +117,20 @@ export function getCurrentSession() {
   const session = localStorage.getItem('chmsu_auth_user');
   if (session) {
     try {
-      return JSON.parse(session);
+      const parsed = JSON.parse(session);
+      // Migrate old sessions or legacy John Doe to the official office roles
+      if (!parsed.name || parsed.name === 'John Doe' || parsed.username === 'admin' || parsed.username === 'records') {
+        const updated = {
+          ...parsed,
+          name: 'Records Officer',
+          role: 'Records Office',
+          officeName: 'Records Management Office',
+          avatar: 'RO'
+        };
+        localStorage.setItem('chmsu_auth_user', JSON.stringify(updated));
+        return updated;
+      }
+      return parsed;
     } catch (e) {
       return null;
     }

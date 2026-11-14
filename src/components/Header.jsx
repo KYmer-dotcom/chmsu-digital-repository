@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, Search, Bell, LogOut, Settings as SettingsIcon, User, PlusCircle, Building2 } from 'lucide-react';
+import { Menu, Search, Bell, LogOut, User, PlusCircle, Building2, ChevronDown } from 'lucide-react';
 
 export default function Header({ 
   toggleSidebar, 
@@ -14,6 +14,9 @@ export default function Header({
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   const isRegistrar = currentUser?.role === 'Registrar';
+  const displayName = currentUser?.name || (isRegistrar ? 'Registrar Officer' : 'Records Officer');
+  const displayRole = currentUser?.officeName || (isRegistrar ? 'Office of the Registrar' : 'Records Management Office');
+  const avatarInitials = currentUser?.avatar || 'RO';
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -23,138 +26,133 @@ export default function Header({
 
   return (
     <header className="top-header">
+      {/* 1. Left Section: Sidebar Toggle & Quick Context */}
       <div className="header-left">
         <button 
           className="toggle-btn" 
           onClick={toggleSidebar}
           aria-label="Toggle Sidebar"
+          title="Toggle Navigation Sidebar"
         >
           <Menu size={20} />
         </button>
 
+        <div className="header-context-badge">
+          <Building2 size={15} className="context-badge-icon" />
+          <span>{isRegistrar ? 'Office of the Registrar' : 'Records Management Office'}</span>
+        </div>
+      </div>
+
+      {/* 2. Center Section: Prominent, Centered Global Search */}
+      <div className="header-center">
         <div className="search-box">
           <Search size={17} className="search-icon" />
           <input
             type="text"
             className="search-input"
-            placeholder={isRegistrar ? "Search student ID, name, or document..." : "Search repository files, policies, or memos..."}
+            placeholder={
+              isRegistrar 
+                ? "Search student ID, name, or requested document..." 
+                : "Search institutional records, policies, manuals, or memos..."
+            }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={handleKeyDown}
           />
+          <kbd className="search-kbd-chip">Ctrl K</kbd>
         </div>
       </div>
 
+      {/* 3. Right Section: Action Button, Notifications & Account Profile */}
       <div className="header-right">
-        {/* Quick Action Button */}
+        {/* Quick Primary Action Button */}
         {onNavigate && (
           <button
             className="btn-header-action"
             onClick={() => onNavigate(isRegistrar ? 'requests' : 'upload')}
+            title={isRegistrar ? "Log a walk-in or online student document request" : "Ingest and archive a new document into repository storage"}
           >
             <PlusCircle size={15} />
             <span>{isRegistrar ? 'Log Student Request' : 'Ingest Document'}</span>
           </button>
         )}
+
+        <div className="header-v-divider" />
+
+        {/* Notification Bell */}
         <div style={{ position: 'relative' }}>
           <button 
-            className="bell-btn" 
+            className="bell-btn-modern" 
             onClick={() => setShowNotifications(!showNotifications)}
             aria-label="Notifications"
+            title="Notifications"
           >
-            <Bell size={20} />
+            <Bell size={18} />
             <span className="bell-dot"></span>
           </button>
 
           {showNotifications && (
-            <div style={{
-              position: 'absolute',
-              right: 0,
-              top: '48px',
-              width: '280px',
-              background: '#ffffff',
-              borderRadius: '12px',
-              border: '1px solid #e2e8f0',
-              boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-              padding: '16px',
-              zIndex: 50
-            }}>
-              <h4 style={{ fontSize: '0.9rem', marginBottom: '10px', color: '#0f172a' }}>Notifications</h4>
-              <div style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div style={{ paddingBottom: '8px', borderBottom: '1px solid #f1f5f9' }}>
-                  <strong>New Upload:</strong> Annual Report 2024 was added by Admin.
+            <div className="header-dropdown-card notifications-menu">
+              <div className="dropdown-menu-header">
+                <h4>System Notifications</h4>
+                <span className="notification-count-tag">3 New</span>
+              </div>
+              <div className="notifications-list">
+                <div className="notification-item">
+                  <strong>{isRegistrar ? 'New Request:' : 'New Archive Ingest:'}</strong> 
+                  {isRegistrar 
+                    ? ' Student #2022-0142 filed request for TOR.' 
+                    : ' Annual Report 2024 was archived.'}
                 </div>
-                <div style={{ paddingBottom: '8px', borderBottom: '1px solid #f1f5f9' }}>
-                  <strong>Backup Complete:</strong> Weekly incremental backup completed.
+                <div className="notification-item">
+                  <strong>Repository Status:</strong> Storage quota is healthy (26% utilized).
                 </div>
-                <div>
-                  <strong>User Access:</strong> R. Santos requested review permission.
+                <div className="notification-item">
+                  <strong>Security Backup:</strong> Automated snapshot created successfully.
                 </div>
               </div>
             </div>
           )}
         </div>
 
+        {/* User Account Profile Pill */}
         <div style={{ position: 'relative' }}>
           <div 
-            className="user-profile" 
+            className="user-profile-pill" 
             onClick={() => setShowUserMenu(!showUserMenu)}
+            title="Account Options"
           >
-            <div className="user-avatar">{currentUser?.avatar || 'AD'}</div>
-            <div className="user-info">
-              <div className="user-name">{currentUser?.name || 'Administrator'}</div>
-              <div className="user-role">{currentUser?.role || 'Repository Administrator'}</div>
+            <div className="user-avatar-modern">{avatarInitials}</div>
+            <div className="user-info-modern">
+              <div className="user-name-modern">{displayName}</div>
+              <div className="user-role-modern">{displayRole}</div>
             </div>
+            <ChevronDown size={14} className={`profile-chevron ${showUserMenu ? 'rotated' : ''}`} />
           </div>
 
           {showUserMenu && (
-            <div style={{
-              position: 'absolute',
-              right: 0,
-              top: '48px',
-              width: '180px',
-              background: '#ffffff',
-              borderRadius: '10px',
-              border: '1px solid #e2e8f0',
-              boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-              padding: '6px',
-              zIndex: 50
-            }}>
+            <div className="header-dropdown-card user-menu-dropdown">
+              <div className="user-menu-info-header">
+                <div className="user-menu-full-name">{displayName}</div>
+                <div className="user-menu-email">{currentUser?.email || (isRegistrar ? 'registrar@chmsu.edu.ph' : 'records@chmsu.edu.ph')}</div>
+              </div>
+              <div className="user-menu-divider" />
               <button 
-                onClick={() => setShowUserMenu(false)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  width: '100%',
-                  padding: '8px 12px',
-                  background: 'transparent',
-                  border: 'none',
-                  fontSize: '0.85rem',
-                  color: '#1e293b',
-                  cursor: 'pointer',
-                  borderRadius: '6px'
+                onClick={() => {
+                  setShowUserMenu(false);
+                  if (onNavigate) onNavigate(isRegistrar ? 'requests' : 'settings');
                 }}
+                className="user-menu-action-btn"
               >
-                <User size={15} /> Profile
+                <User size={15} /> 
+                <span>Account Profile</span>
               </button>
               <button 
                 onClick={onLogout}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  width: '100%',
-                  padding: '8px 12px',
-                  background: 'transparent',
-                  border: 'none',
-                  fontSize: '0.85rem',
-                  color: '#ef4444',
-                  cursor: 'pointer',
-                  borderRadius: '6px'
-                }}
+                className="user-menu-action-btn logout-danger"
               >
-                <LogOut size={15} /> Sign Out
+                <LogOut size={15} /> 
+                <span>Sign Out</span>
               </button>
             </div>
           )}
