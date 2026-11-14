@@ -59,14 +59,6 @@ export default function Sidebar({
         )}
       </div>
 
-      {/* Office Role Pill in Sidebar */}
-      {!isCollapsed && (
-        <div className="sidebar-office-tag">
-          <span className="office-tag-dot"></span>
-          <span>{isRegistrar ? 'Student Requests Portal' : 'Storage & Archiving Portal'}</span>
-        </div>
-      )}
-
       {/* Main Navigation */}
       <nav className="sidebar-nav">
         {navItems.map((item) => {

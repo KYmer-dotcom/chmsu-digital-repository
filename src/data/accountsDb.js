@@ -7,10 +7,10 @@ export const initialAccounts = [
     username: 'records',
     email: 'records@chmsu.edu.ph',
     password: 'admin123',
-    name: 'Records Officer',
+    name: 'Records Office',
     role: 'Records Office',
-    officeName: 'Records Management Office',
-    department: 'University Archives & Records Section',
+    officeName: 'Records Office',
+    department: 'Records Management',
     avatar: 'RO',
     canManageStorage: true,
     canProcessRequests: false
@@ -20,10 +20,10 @@ export const initialAccounts = [
     username: 'registrar',
     email: 'registrar@chmsu.edu.ph',
     password: 'registrar123',
-    name: 'Registrar Officer',
+    name: 'Registrar Office',
     role: 'Registrar',
-    officeName: 'Office of the Registrar',
-    department: 'Student Academic Records & Admissions',
+    officeName: 'Registrar Office',
+    department: 'Office of the Registrar',
     avatar: 'RO',
     canManageStorage: false,
     canProcessRequests: true
@@ -34,10 +34,10 @@ export const initialAccounts = [
     username: 'admin',
     email: 'admin@chmsu.edu.ph',
     password: 'admin123',
-    name: 'Records Officer',
+    name: 'Records Office',
     role: 'Records Office',
-    officeName: 'Records Management Office',
-    department: 'University Archives & Records Section',
+    officeName: 'Records Office',
+    department: 'Records Management',
     avatar: 'RO',
     canManageStorage: true,
     canProcessRequests: false
@@ -49,7 +49,6 @@ export function getAccounts() {
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
-      // Ensure the 2 dedicated accounts exist
       if (parsed.some((a) => a.username === 'registrar')) {
         return parsed;
       }
@@ -57,7 +56,6 @@ export function getAccounts() {
       console.error('Failed to parse chmsu_accounts, resetting to default.', e);
     }
   }
-  // Initialize with seed accounts
   localStorage.setItem('chmsu_accounts', JSON.stringify(initialAccounts));
   return initialAccounts;
 }
@@ -70,7 +68,6 @@ export function authenticateUser(identifier, password) {
   const accounts = getAccounts();
   const trimmedId = (identifier || '').trim().toLowerCase();
   
-  // Find account by either username or email
   const user = accounts.find(
     (acc) =>
       acc.username.toLowerCase() === trimmedId ||
@@ -92,7 +89,6 @@ export function authenticateUser(identifier, password) {
     };
   }
 
-  // Create safe user object (omit password)
   const safeUser = {
     id: user.id,
     username: user.username,
@@ -101,7 +97,7 @@ export function authenticateUser(identifier, password) {
     role: user.role,
     officeName: user.officeName,
     department: user.department,
-    avatar: user.avatar || user.name.slice(0, 2).toUpperCase(),
+    avatar: user.avatar || 'RO',
     canManageStorage: user.canManageStorage,
     canProcessRequests: user.canProcessRequests
   };
@@ -118,19 +114,16 @@ export function getCurrentSession() {
   if (session) {
     try {
       const parsed = JSON.parse(session);
-      // Migrate old sessions or legacy John Doe to the official office roles
-      if (!parsed.name || parsed.name === 'John Doe' || parsed.username === 'admin' || parsed.username === 'records') {
-        const updated = {
-          ...parsed,
-          name: 'Records Officer',
-          role: 'Records Office',
-          officeName: 'Records Management Office',
-          avatar: 'RO'
-        };
-        localStorage.setItem('chmsu_auth_user', JSON.stringify(updated));
-        return updated;
-      }
-      return parsed;
+      const isReg = parsed.username === 'registrar' || parsed.role === 'Registrar';
+      const updated = {
+        ...parsed,
+        name: isReg ? 'Registrar Office' : 'Records Office',
+        role: isReg ? 'Registrar' : 'Records Office',
+        officeName: isReg ? 'Registrar Office' : 'Records Office',
+        avatar: 'RO'
+      };
+      localStorage.setItem('chmsu_auth_user', JSON.stringify(updated));
+      return updated;
     } catch (e) {
       return null;
     }
