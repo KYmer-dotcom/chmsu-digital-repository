@@ -1297,12 +1297,12 @@ button, input, select, textarea {
   position: relative;
   z-index: 10;
   display: flex;
-  width: 820px;
-  max-width: 92vw;
-  min-height: 450px;
+  width: 860px;
+  max-width: 94vw;
+  min-height: 520px;
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.07);
+  box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 /* Left Half - CHMSU Green Seal */
@@ -1322,38 +1322,46 @@ button, input, select, textarea {
 }
 
 .seal-image {
-  width: 260px;
-  height: 260px;
+  width: 270px;
+  height: 270px;
   max-width: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.32));
 }
 
 /* Right Half - Dark Navy Account Form */
 .login-v2-form-section {
-  flex: 1.15;
+  flex: 1.25;
   background-color: #171d28;
-  padding: 46px 42px;
+  padding: 44px 42px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .form-eyebrow {
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   font-weight: 800;
-  letter-spacing: 2.5px;
+  letter-spacing: 2px;
   color: #e5a93b;
   text-transform: uppercase;
   margin-bottom: 6px;
 }
 
 .form-heading {
-  font-size: 1.65rem;
-  font-weight: 700;
+  font-size: 1.75rem;
+  font-weight: 800;
   color: #ffffff;
-  margin-bottom: 24px;
-  letter-spacing: -0.3px;
+  margin-bottom: 4px;
+  letter-spacing: -0.4px;
+}
+
+.form-subheading {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-bottom: 22px;
+  font-weight: 400;
+  line-height: 1.4;
 }
 
 .login-v2-form {
@@ -1367,19 +1375,25 @@ button, input, select, textarea {
   flex-direction: column;
 }
 
-.v2-field-label {
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  color: #8c9ba5;
-  text-transform: uppercase;
-  margin-bottom: 6px;
+.v2-input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.v2-input-icon-left {
+  position: absolute;
+  left: 14px;
+  color: #64748b;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .v2-input-field {
   width: 100%;
-  height: 42px;
-  background: #f1f5f9;
+  height: 44px;
+  background: #ffffff;
   color: #0f172a;
   border-radius: 8px;
   border: 1.5px solid transparent;
@@ -1391,20 +1405,17 @@ button, input, select, textarea {
   box-sizing: border-box;
 }
 
+.v2-input-field.has-left-icon {
+  padding-left: 42px;
+}
+
+.v2-input-field.has-right-icon {
+  padding-right: 44px;
+}
+
 .v2-input-field:focus {
   border-color: #e5a93b;
   box-shadow: 0 0 0 3px rgba(229, 169, 59, 0.25);
-  background: #ffffff;
-}
-
-.v2-password-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.v2-password-wrap .v2-input-field {
-  padding-right: 42px;
 }
 
 .v2-eye-toggle {
@@ -1420,6 +1431,7 @@ button, input, select, textarea {
   padding: 4px;
   border-radius: 4px;
   transition: color 0.15s ease;
+  z-index: 2;
 }
 
 .v2-eye-toggle:hover {
@@ -1430,8 +1442,8 @@ button, input, select, textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 6px 0 20px;
-  font-size: 0.82rem;
+  margin: 6px 0 18px;
+  font-size: 0.83rem;
 }
 
 .v2-checkbox-label {
@@ -1444,73 +1456,101 @@ button, input, select, textarea {
 }
 
 .v2-checkbox-label input[type="checkbox"] {
-  accent-color: #e5a93b;
-  width: 15px;
-  height: 15px;
+  accent-color: #0e8345;
+  width: 16px;
+  height: 16px;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .v2-forgot-link {
-  color: #8c9ba5;
+  color: #0284c7;
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 600;
   transition: color 0.15s ease;
 }
 
 .v2-forgot-link:hover {
-  color: #e5a93b;
+  color: #38bdf8;
   text-decoration: underline;
 }
 
-/* Yellow / Amber Login Button */
+/* Primary Sign In Button */
 .v2-btn-login {
   width: 100%;
   height: 44px;
-  background-color: #e5a93b;
-  color: #161c28;
+  background-color: #0e8345;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(229, 169, 59, 0.35);
+  box-shadow: 0 4px 14px rgba(14, 131, 69, 0.35);
 }
 
 .v2-btn-login:hover {
-  background-color: #d69727;
+  background-color: #0b703a;
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(229, 169, 59, 0.45);
+  box-shadow: 0 6px 18px rgba(14, 131, 69, 0.45);
 }
 
 .v2-btn-login:active {
   transform: translateY(0);
 }
 
-.v2-sso-container {
-  margin-top: 14px;
-  text-align: center;
+/* Divider 'or' */
+.v2-divider {
+  display: flex;
+  align-items: center;
+  margin: 16px 0;
+  color: #64748b;
+  font-size: 0.8rem;
 }
 
-.v2-sso-link {
-  background: transparent;
-  border: none;
-  color: #8c9ba5;
-  font-size: 0.78rem;
-  font-weight: 500;
-  cursor: pointer;
-  display: inline-flex;
+.v2-divider::before, .v2-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.v2-divider span {
+  padding: 0 12px;
+}
+
+/* SSO Button matching Image 1 details */
+.v2-btn-sso {
+  width: 100%;
+  height: 44px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #1e293b;
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 6px;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.v2-sso-link:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.06);
+.v2-btn-sso:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Footer Copyright */
+.v2-footer-copy {
+  margin-top: 20px;
+  font-size: 0.72rem;
+  color: #64748b;
+  text-align: center;
+  line-height: 1.45;
 }
 
 /* Responsive viewports */

@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { User, Eye, EyeOff, ChevronDown, Check, ShieldCheck, ArrowRight } from 'lucide-react';
+import { User, Lock, Eye, EyeOff, ChevronDown, Check, ShieldCheck, ArrowRight } from 'lucide-react';
 
 export default function LoginView({ onLoginSuccess }) {
   const roles = [
-    { label: 'Library Staff (Circulation)', defaultUser: 'staff' },
-    { label: 'Administrator (MIS)', defaultUser: 'john.doe@chmsu.edu.ph' },
+    { label: 'Repository Administrator', defaultUser: 'john.doe@chmsu.edu.ph' },
     { label: 'Faculty Researcher', defaultUser: 'r.santos@chmsu.edu.ph' },
-    { label: 'Student / Guest', defaultUser: 'student.chmsu' }
+    { label: 'Department Reviewer', defaultUser: 'l.delacruz@chmsu.edu.ph' },
+    { label: 'University Archivist', defaultUser: 'e.villanueva@chmsu.edu.ph' },
+    { label: 'Guest / Student Access', defaultUser: 'student.chmsu@chmsu.edu.ph' }
   ];
 
   const [selectedRole, setSelectedRole] = useState(roles[0]);
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
-  const [username, setUsername] = useState(roles[0].defaultUser);
+  const [username, setUsername] = useState('john.doe@chmsu.edu.ph');
   const [password, setPassword] = useState('••••••••••••');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -38,7 +39,7 @@ export default function LoginView({ onLoginSuccess }) {
 
       {/* Top Header Bar / Role Switcher & Bypass */}
       <div className="login-v2-topbar">
-        {/* Bypass / Direct Access Button */}
+        {/* Direct to Dashboard Bypass */}
         <button 
           className="login-v2-bypass-btn"
           onClick={onLoginSuccess}
@@ -62,7 +63,7 @@ export default function LoginView({ onLoginSuccess }) {
 
           {isRoleDropdownOpen && (
             <div className="login-v2-role-menu">
-              <div className="role-menu-header">Select University Role</div>
+              <div className="role-menu-header">Repository Role</div>
               {roles.map((r) => (
                 <button
                   key={r.label}
@@ -81,7 +82,7 @@ export default function LoginView({ onLoginSuccess }) {
 
       {/* Center Floating Authentication Card */}
       <div className="login-v2-card">
-        {/* Left Green Half with Seal */}
+        {/* Left Green Half with CHMSU Seal */}
         <div className="login-v2-seal-section">
           <div className="seal-ring">
             <img 
@@ -94,30 +95,34 @@ export default function LoginView({ onLoginSuccess }) {
 
         {/* Right Dark Navy Half with Form */}
         <div className="login-v2-form-section">
-          <div className="form-eyebrow">CHMSU LIBRARY</div>
-          <h2 className="form-heading">Login to your Account</h2>
+          <div className="form-eyebrow">CHMSU DIGITAL REPOSITORY</div>
+          <h2 className="form-heading">Welcome</h2>
+          <p className="form-subheading">Sign in to access the CHMSU Digital Repository</p>
 
           <form onSubmit={handleSubmit} className="login-v2-form">
-            {/* Username Field */}
+            {/* Username / Institutional Email Field with Left Icon */}
             <div className="v2-input-group">
-              <input
-                type="text"
-                className="v2-input-field"
-                placeholder="Username or Institutional Email"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
+              <div className="v2-input-with-icon">
+                <User size={18} className="v2-input-icon-left" />
+                <input
+                  type="text"
+                  className="v2-input-field has-left-icon"
+                  placeholder="Username or Institutional Email"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
+              </div>
             </div>
 
-            {/* Password Field */}
+            {/* Password Field with Left Lock & Right Eye Toggle */}
             <div className="v2-input-group">
-              <label className="v2-field-label">PASSWORD</label>
-              <div className="v2-password-wrap">
+              <div className="v2-input-with-icon">
+                <Lock size={18} className="v2-input-icon-left" />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  className="v2-input-field"
-                  placeholder="Enter Password"
+                  className="v2-input-field has-left-icon has-right-icon"
+                  placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -128,12 +133,12 @@ export default function LoginView({ onLoginSuccess }) {
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label="Toggle password visibility"
                 >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                 </button>
               </div>
             </div>
 
-            {/* Remember Me Checkbox */}
+            {/* Remember Me Checkbox & Forgot Password Link */}
             <div className="v2-remember-row">
               <label className="v2-checkbox-label">
                 <input
@@ -141,37 +146,46 @@ export default function LoginView({ onLoginSuccess }) {
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
                 />
-                <span>Remember Me</span>
+                <span>Remember me</span>
               </label>
               <a 
                 href="#forgot" 
                 className="v2-forgot-link"
                 onClick={(e) => { 
                   e.preventDefault(); 
-                  alert('A recovery link has been sent to your registered @chmsu.edu.ph address.'); 
+                  alert('A recovery link has been sent to your registered @chmsu.edu.ph institutional email.'); 
                 }}
               >
                 Forgot password?
               </a>
             </div>
 
-            {/* Yellow / Amber Login Button */}
+            {/* Sign In Primary Button */}
             <button type="submit" className="v2-btn-login">
-              Login
+              Sign In
             </button>
 
-            {/* SSO Institutional Option */}
-            <div className="v2-sso-container">
-              <button 
-                type="button" 
-                className="v2-sso-link"
-                onClick={onLoginSuccess}
-              >
-                <ShieldCheck size={14} color="#e5a93b" />
-                <span>Sign in with CHMSU Google SSO</span>
-              </button>
+            {/* Divider 'or' */}
+            <div className="v2-divider">
+              <span>or</span>
             </div>
+
+            {/* SSO Institutional Option */}
+            <button 
+              type="button" 
+              className="v2-btn-sso"
+              onClick={onLoginSuccess}
+            >
+              <ShieldCheck size={18} color="#10b981" />
+              <span>Sign in with CHMSU Account</span>
+            </button>
           </form>
+
+          {/* Footer Copyright */}
+          <div className="v2-footer-copy">
+            © 2026 Carlos Hilado Memorial State University - Talisay Campus.<br />
+            All rights reserved.
+          </div>
         </div>
       </div>
     </div>
