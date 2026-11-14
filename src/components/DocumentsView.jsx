@@ -7,8 +7,11 @@ import {
   ChevronLeft,
   ChevronRight,
   Trash2,
-  Share2
+  Share2,
+  Building2,
+  RotateCcw
 } from 'lucide-react';
+import { chmsuTalisayDepartments } from '../data/mockData';
 
 export default function DocumentsView({ 
   currentUser,
@@ -20,6 +23,7 @@ export default function DocumentsView({
 }) {
   const isRegistrar = currentUser?.role === 'Registrar';
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedDepartment, setSelectedDepartment] = useState('All');
   const [selectedType, setSelectedType] = useState('All');
   const [selectedYear, setSelectedYear] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,6 +54,7 @@ export default function DocumentsView({
   // Filter documents
   const filteredDocs = documents.filter((doc) => {
     if (selectedCategory !== 'All' && doc.category !== selectedCategory) return false;
+    if (selectedDepartment !== 'All' && doc.department !== selectedDepartment) return false;
     if (selectedType !== 'All' && doc.type !== selectedType) return false;
     if (selectedYear !== 'All' && doc.year !== selectedYear) return false;
     return true;
@@ -67,20 +72,37 @@ export default function DocumentsView({
     setActiveMenuId(null);
   };
 
+  const handleResetFilters = () => {
+    setSelectedCategory('All');
+    setSelectedDepartment('All');
+    setSelectedType('All');
+    setSelectedYear('All');
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters = 
+    selectedCategory !== 'All' || 
+    selectedDepartment !== 'All' || 
+    selectedType !== 'All' || 
+    selectedYear !== 'All';
+
   return (
     <div className="page-content">
       <div className="page-header">
         <h2 className="page-title">Documents</h2>
-        <p className="page-subtitle">Browse and manage all repository documents</p>
+        <p className="page-subtitle">Browse, filter, and retrieve official CHMSU Talisay records</p>
       </div>
 
-      {/* Filters and Upload Action */}
+      {/* Filters Bar */}
       <div className="filters-bar">
         <div className="filter-selects">
           <select 
             className="filter-select"
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => {
+              setSelectedCategory(e.target.value);
+              setCurrentPage(1);
+            }}
           >
             <option value="All">All Categories</option>
             <option value="Policies">Policies</option>
@@ -91,10 +113,40 @@ export default function DocumentsView({
             <option value="Others">Others</option>
           </select>
 
+          {/* Department / Office Filter */}
+          <select 
+            className="filter-select"
+            value={selectedDepartment}
+            onChange={(e) => {
+              setSelectedDepartment(e.target.value);
+              setCurrentPage(1);
+            }}
+            style={{ minWidth: '220px' }}
+          >
+            <option value="All">All Departments / Offices</option>
+            <optgroup label="Academic Colleges (Talisay)">
+              {chmsuTalisayDepartments
+                .filter(d => d.type === 'Academic')
+                .map(d => (
+                  <option key={d.id} value={d.name}>{d.name}</option>
+                ))}
+            </optgroup>
+            <optgroup label="Administrative Offices">
+              {chmsuTalisayDepartments
+                .filter(d => d.type === 'Administrative')
+                .map(d => (
+                  <option key={d.id} value={d.name}>{d.name}</option>
+                ))}
+            </optgroup>
+          </select>
+
           <select 
             className="filter-select"
             value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
+            onChange={(e) => {
+              setSelectedType(e.target.value);
+              setCurrentPage(1);
+            }}
           >
             <option value="All">All Document Types</option>
             <option value="PDF">PDF</option>
@@ -105,7 +157,10 @@ export default function DocumentsView({
           <select 
             className="filter-select"
             value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
+            onChange={(e) => {
+              setSelectedYear(e.target.value);
+              setCurrentPage(1);
+            }}
           >
             <option value="All">All Years</option>
             <option value="2026">2026</option>
@@ -113,6 +168,28 @@ export default function DocumentsView({
             <option value="2024">2024</option>
             <option value="2023">2023</option>
           </select>
+
+          {hasActiveFilters && (
+            <button
+              onClick={handleResetFilters}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 12px',
+                background: '#f1f5f9',
+                border: '1px solid #cbd5e1',
+                borderRadius: '8px',
+                fontSize: '0.8rem',
+                color: '#475569',
+                cursor: 'pointer',
+                fontWeight: 600
+              }}
+              title="Reset all filters"
+            >
+              <RotateCcw size={13} /> Reset
+            </button>
+          )}
         </div>
       </div>
 
@@ -124,6 +201,7 @@ export default function DocumentsView({
               <tr>
                 <th>Title</th>
                 <th>Category</th>
+                <th>Originating Department</th>
                 <th>Type</th>
                 <th>Date Uploaded</th>
                 <th>Size</th>
@@ -154,6 +232,35 @@ export default function DocumentsView({
                   <td>
                     <span className={`badge ${getBadgeClass(doc.category)}`}>
                       {doc.category}
+                    </span>
+                  </td>
+                  <td>
+                    <span 
+                      className="dept-pill"
+                      title={`Filter by ${doc.department || 'Records Office'}`}
+                      onClick={() => setSelectedDepartment(doc.department || 'All')}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        fontSize: '0.78rem',
+                        padding: '4px 9px',
+                        borderRadius: '6px',
+                        background: '#f1f5f9',
+                        color: '#1e293b',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        border: '1px solid #e2e8f0',
+                        maxWidth: '220px',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}
+                    >
+                      <Building2 size={13} color="#0e8345" style={{ flexShrink: 0 }} />
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {doc.department || 'Records Office'}
+                      </span>
                     </span>
                   </td>
                   <td style={{ color: '#64748b' }}>{doc.type}</td>
@@ -249,8 +356,13 @@ export default function DocumentsView({
 
         {/* Pagination Bar */}
         <div className="pagination-container" style={{ padding: '16px 20px' }}>
-          <div>
-            Showing 1 to {filteredDocs.length} of 2,504 entries
+          <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+            Showing {filteredDocs.length} {filteredDocs.length === 1 ? 'record' : 'records'} 
+            {selectedDepartment !== 'All' && (
+              <span style={{ marginLeft: '6px', color: '#0e8345', fontWeight: 600 }}>
+                • {selectedDepartment}
+              </span>
+            )}
           </div>
 
           <div className="pagination-controls">

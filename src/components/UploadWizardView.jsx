@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { UploadCloud, CheckCircle2, FileText, ArrowRight, ArrowLeft } from 'lucide-react';
+import { UploadCloud, CheckCircle2, FileText, ArrowRight, ArrowLeft, Building2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { chmsuTalisayDepartments } from '../data/mockData';
 
 export default function UploadWizardView({ onCancel, onUploadSuccess, showToast }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -10,9 +11,10 @@ export default function UploadWizardView({ onCancel, onUploadSuccess, showToast 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [docType, setDocType] = useState('');
+  const [department, setDepartment] = useState('College of Engineering (COE)');
   const [description, setDescription] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [author, setAuthor] = useState('Admin');
+  const [author, setAuthor] = useState('Records Officer');
   const [tags, setTags] = useState('Academic, Institutional');
   const [accessLevel, setAccessLevel] = useState('Public');
   const [isDragOver, setIsDragOver] = useState(false);
@@ -45,6 +47,10 @@ export default function UploadWizardView({ onCancel, onUploadSuccess, showToast 
         showToast('Please select a document type');
         return;
       }
+      if (!department) {
+        showToast('Please select an originating department');
+        return;
+      }
       setCurrentStep(2);
     } else if (currentStep === 2) {
       setCurrentStep(3);
@@ -54,11 +60,12 @@ export default function UploadWizardView({ onCancel, onUploadSuccess, showToast 
         id: Date.now(),
         title: title.trim(),
         category: category,
+        department: department,
         type: docType,
-        dateUploaded: 'Oct 20, 2026',
+        dateUploaded: 'Nov 14, 2026',
         size: selectedFile ? `${(selectedFile.size / (1024 * 1024)).toFixed(1)} MB` : '1.5 MB',
-        uploadedBy: author || 'Admin',
-        description: description || 'No description provided.',
+        uploadedBy: author || 'Records Officer',
+        description: description || 'Official university record archived into CHMSU repository.',
         year: '2026'
       };
 
@@ -159,6 +166,33 @@ export default function UploadWizardView({ onCancel, onUploadSuccess, showToast 
               </div>
             </div>
 
+            {/* Originating Department / Office */}
+            <div className="form-group">
+              <label className="form-label">
+                Originating Department / Office <span className="req">*</span>
+              </label>
+              <select
+                className="form-select"
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+              >
+                <optgroup label="Academic Colleges (Talisay Main Campus)">
+                  {chmsuTalisayDepartments
+                    .filter(d => d.type === 'Academic')
+                    .map(d => (
+                      <option key={d.id} value={d.name}>{d.name}</option>
+                    ))}
+                </optgroup>
+                <optgroup label="Administrative & Support Offices">
+                  {chmsuTalisayDepartments
+                    .filter(d => d.type === 'Administrative')
+                    .map(d => (
+                      <option key={d.id} value={d.name}>{d.name}</option>
+                    ))}
+                </optgroup>
+              </select>
+            </div>
+
             <div className="form-group">
               <label className="form-label">Description</label>
               <textarea
@@ -255,12 +289,27 @@ export default function UploadWizardView({ onCancel, onUploadSuccess, showToast 
             </div>
 
             <div className="form-group">
-              <label className="form-label">Department / Unit</label>
-              <input
-                type="text"
-                className="form-input"
-                defaultValue="Office of the Vice President for Academic Affairs"
-              />
+              <label className="form-label">Originating Department / Unit</label>
+              <select
+                className="form-select"
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+              >
+                <optgroup label="Academic Colleges (Talisay)">
+                  {chmsuTalisayDepartments
+                    .filter(d => d.type === 'Academic')
+                    .map(d => (
+                      <option key={d.id} value={d.name}>{d.name}</option>
+                    ))}
+                </optgroup>
+                <optgroup label="Administrative Offices">
+                  {chmsuTalisayDepartments
+                    .filter(d => d.type === 'Administrative')
+                    .map(d => (
+                      <option key={d.id} value={d.name}>{d.name}</option>
+                    ))}
+                </optgroup>
+              </select>
             </div>
           </div>
         )}
@@ -270,17 +319,20 @@ export default function UploadWizardView({ onCancel, onUploadSuccess, showToast 
           <div className="upload-step-content">
             <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
               <h4 style={{ fontSize: '1rem', color: '#0f172a', marginBottom: '14px' }}>Review Document Submission</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '130px 1fr', rowGap: '12px', fontSize: '0.88rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr', rowGap: '12px', fontSize: '0.88rem' }}>
                 <span style={{ color: '#64748b', fontWeight: 600 }}>Title:</span>
                 <span style={{ color: '#0f172a', fontWeight: 600 }}>{title}</span>
+
+                <span style={{ color: '#64748b', fontWeight: 600 }}>Originating Dept:</span>
+                <span style={{ color: '#0e8345', fontWeight: 700 }}>{department}</span>
 
                 <span style={{ color: '#64748b', fontWeight: 600 }}>Category:</span>
                 <span>{category}</span>
 
-                <span style={{ color: '#64748b', fontWeight: 600 }}>Type:</span>
+                <span style={{ color: '#64748b', fontWeight: 600 }}>Document Type:</span>
                 <span>{docType}</span>
 
-                <span style={{ color: '#64748b', fontWeight: 600 }}>File:</span>
+                <span style={{ color: '#64748b', fontWeight: 600 }}>File Attachment:</span>
                 <span>{selectedFile ? selectedFile.name : 'Generated repository artifact'}</span>
 
                 <span style={{ color: '#64748b', fontWeight: 600 }}>Description:</span>

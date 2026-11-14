@@ -43,7 +43,7 @@ export default function Header({
             placeholder={
               isRegistrar 
                 ? "Search student ID, name, or document..." 
-                : "Search documents, policies, or memos..."
+                : "Search documents, colleges (e.g. COE, CIT), or offices..."
             }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, FileCode2, Download, Share2, Calendar, User, Tag, HardDrive } from 'lucide-react';
+import { X, FileCode2, Download, Share2, Calendar, User, Tag, HardDrive, Building2 } from 'lucide-react';
 
 export default function DocumentModal({ doc, onClose, showToast }) {
   if (!doc) return null;
@@ -30,6 +30,10 @@ export default function DocumentModal({ doc, onClose, showToast }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: '#475569' }}>
               <Tag size={15} color="#0f382c" />
               <strong>Category:</strong> {doc.category}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: '#475569' }}>
+              <Building2 size={15} color="#0e8345" />
+              <strong>Department:</strong> {doc.department || 'Records Management Office'}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: '#475569' }}>
               <Calendar size={15} color="#0f382c" />
@@ -65,8 +69,11 @@ export default function DocumentModal({ doc, onClose, showToast }) {
             <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0f382c', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Carlos Hilado Memorial State University
             </div>
+            <div style={{ fontSize: '0.8rem', color: '#0e8345', fontWeight: 600, marginTop: '2px' }}>
+              {doc.department || 'Official Repository Archive'}
+            </div>
             <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '14px' }}>
-              Talisay City, Negros Occidental • Official Repository Record
+              Talisay Main Campus, Negros Occidental • Official Repository Record
             </div>
             <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0f172a' }}>
               {doc.title}

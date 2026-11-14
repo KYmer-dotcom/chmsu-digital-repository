@@ -29,10 +29,22 @@ export default function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Data State with localStorage persistence
+  // Data State with localStorage persistence & automatic schema upgrade
   const [documents, setDocuments] = useState(() => {
     const saved = localStorage.getItem('chmsu_docs');
-    return saved ? JSON.parse(saved) : initialDocuments;
+    if (!saved) return initialDocuments;
+    try {
+      const parsed = JSON.parse(saved);
+      // If legacy docs lack department or mock dataset expanded, upgrade to initialDocuments
+      const needsUpgrade = parsed.some(d => !d.department) || parsed.length < initialDocuments.length;
+      if (needsUpgrade) {
+        localStorage.setItem('chmsu_docs', JSON.stringify(initialDocuments));
+        return initialDocuments;
+      }
+      return parsed;
+    } catch {
+      return initialDocuments;
+    }
   });
   const [categories, setCategories] = useState(() => {
     const saved = localStorage.getItem('chmsu_cats');
