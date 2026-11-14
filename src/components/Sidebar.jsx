@@ -5,27 +5,46 @@ import {
   FolderKanban, 
   Upload, 
   BarChart3, 
-  Users, 
   Database, 
   Settings, 
   HelpCircle,
-  LogIn
+  LogOut,
+  ClipboardList
 } from 'lucide-react';
 
-export default function Sidebar({ currentView, setCurrentView, isCollapsed, onShowLogin }) {
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'documents', label: 'Documents', icon: FileText },
+export default function Sidebar({ 
+  currentUser,
+  currentView, 
+  setCurrentView, 
+  isCollapsed, 
+  onLogout 
+}) {
+  const isRegistrar = currentUser?.role === 'Registrar';
+
+  // Registrar Items (Student Request focus)
+  const registrarItems = [
+    { id: 'dashboard', label: 'Requests Dashboard', icon: LayoutDashboard },
+    { id: 'requests', label: 'Student Requests', icon: ClipboardList },
+    { id: 'documents', label: 'Archived Records', icon: FileText },
+    { id: 'reports', label: 'Release Reports', icon: BarChart3 },
+  ];
+
+  // Records Office Items (Storage, Backups, and Ingestion focus)
+  const recordsItems = [
+    { id: 'dashboard', label: 'Storage Dashboard', icon: LayoutDashboard },
+    { id: 'documents', label: 'Repository Files', icon: FileText },
     { id: 'categories', label: 'Categories', icon: FolderKanban },
-    { id: 'upload', label: 'Upload', icon: Upload },
-    { id: 'reports', label: 'Reports', icon: BarChart3 },
-    { id: 'users', label: 'Users', icon: Users },
-    { id: 'backup', label: 'Backup & Recovery', icon: Database },
+    { id: 'upload', label: 'Upload Wizard', icon: Upload },
+    { id: 'reports', label: 'Archive Reports', icon: BarChart3 },
+    { id: 'backup', label: 'Backup & Storage', icon: Database },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
+  const navItems = isRegistrar ? registrarItems : recordsItems;
+
   return (
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+      {/* Brand Header */}
       <div className="sidebar-header">
         <img 
           src="./chmsu_logo.png" 
@@ -35,11 +54,20 @@ export default function Sidebar({ currentView, setCurrentView, isCollapsed, onSh
         {!isCollapsed && (
           <div className="sidebar-brand">
             <h1>CHMSU</h1>
-            <p>Digital Repository</p>
+            <p>{isRegistrar ? 'Office of the Registrar' : 'Records Management'}</p>
           </div>
         )}
       </div>
 
+      {/* Office Role Pill in Sidebar */}
+      {!isCollapsed && (
+        <div className="sidebar-office-tag">
+          <span className="office-tag-dot"></span>
+          <span>{isRegistrar ? 'Student Requests Portal' : 'Storage & Archiving Portal'}</span>
+        </div>
+      )}
+
+      {/* Main Navigation */}
       <nav className="sidebar-nav">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -58,6 +86,7 @@ export default function Sidebar({ currentView, setCurrentView, isCollapsed, onSh
         })}
       </nav>
 
+      {/* Bottom Footer: Help & Sign Out */}
       <div className="sidebar-footer">
         <button
           className={`nav-item ${currentView === 'guide' ? 'active' : ''}`}
@@ -68,13 +97,13 @@ export default function Sidebar({ currentView, setCurrentView, isCollapsed, onSh
           {!isCollapsed && <span>Help / User Guide</span>}
         </button>
         <button
-          className="nav-item"
-          onClick={onShowLogin}
-          title={isCollapsed ? 'Sign In Screen' : undefined}
-          style={{ marginTop: '4px', opacity: 0.8 }}
+          className="nav-item btn-sidebar-logout"
+          onClick={onLogout}
+          title={isCollapsed ? 'Sign Out' : undefined}
+          style={{ marginTop: '4px' }}
         >
-          <LogIn size={19} />
-          {!isCollapsed && <span>Sign In Screen</span>}
+          <LogOut size={19} />
+          {!isCollapsed && <span>Sign Out</span>}
         </button>
       </div>
     </aside>

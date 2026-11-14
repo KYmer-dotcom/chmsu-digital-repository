@@ -124,7 +124,7 @@ export default function LoginView({ onLoginSuccess }) {
                 className="v2-forgot-link"
                 onClick={(e) => { 
                   e.preventDefault(); 
-                  alert('Default credentials: Username "admin" and password "admin123"'); 
+                  alert('Available Accounts:\n• Records Office: "records" (Password: admin123)\n• Registrar: "registrar" (Password: registrar123)'); 
                 }}
               >
                 Forgot password?

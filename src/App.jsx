@@ -13,7 +13,8 @@ import ReportsView from './components/ReportsView';
 import UsersView from './components/UsersView';
 import SettingsView from './components/SettingsView';
 import DocumentModal from './components/DocumentModal';
-import { initialDocuments, initialCategories } from './data/mockData';
+import StudentRequestsView from './components/StudentRequestsView';
+import { initialDocuments, initialCategories, initialStudentRequests } from './data/mockData';
 import { getCurrentSession, clearCurrentSession, initialAccounts } from './data/accountsDb';
 import { CheckCircle2 } from 'lucide-react';
 
@@ -37,6 +38,10 @@ export default function App() {
     const saved = localStorage.getItem('chmsu_cats');
     return saved ? JSON.parse(saved) : initialCategories;
   });
+  const [studentRequests, setStudentRequests] = useState(() => {
+    const saved = localStorage.getItem('chmsu_student_requests');
+    return saved ? JSON.parse(saved) : initialStudentRequests;
+  });
   const [selectedDocForModal, setSelectedDocForModal] = useState(null);
 
   // Sync to localStorage
@@ -48,6 +53,23 @@ export default function App() {
   const updateCategories = (cats) => {
     setCategories(cats);
     localStorage.setItem('chmsu_cats', JSON.stringify(cats));
+  };
+
+  const updateStudentRequests = (reqs) => {
+    setStudentRequests(reqs);
+    localStorage.setItem('chmsu_student_requests', JSON.stringify(reqs));
+  };
+
+  const handleUpdateRequestStatus = (id, newStatus) => {
+    const updated = studentRequests.map((r) => 
+      r.id === id ? { ...r, status: newStatus } : r
+    );
+    updateStudentRequests(updated);
+  };
+
+  const handleAddRequest = (newReq) => {
+    const updated = [newReq, ...studentRequests];
+    updateStudentRequests(updated);
   };
 
   // Toast notifications
@@ -143,10 +165,11 @@ export default function App() {
 
       {/* Main Sidebar */}
       <Sidebar 
+        currentUser={currentUser}
         currentView={currentView}
         setCurrentView={setCurrentView}
         isCollapsed={isSidebarCollapsed}
-        onShowLogin={handleLogout}
+        onLogout={handleLogout}
       />
 
       {/* Main Workspace */}
@@ -158,14 +181,26 @@ export default function App() {
           setSearchQuery={setSearchQuery}
           onLogout={handleLogout}
           currentUser={currentUser}
+          onNavigate={setCurrentView}
         />
 
         <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           {currentView === 'dashboard' && (
             <DashboardView 
+              currentUser={currentUser}
               documents={documents}
+              studentRequests={studentRequests}
               onNavigate={setCurrentView}
               onSelectDocument={setSelectedDocForModal}
+            />
+          )}
+
+          {currentView === 'requests' && (
+            <StudentRequestsView 
+              requests={studentRequests}
+              onUpdateRequestStatus={handleUpdateRequestStatus}
+              onAddRequest={handleAddRequest}
+              showToast={showToast}
             />
           )}
 

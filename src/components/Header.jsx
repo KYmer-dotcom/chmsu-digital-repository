@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, Search, Bell, LogOut, Settings as SettingsIcon, User } from 'lucide-react';
+import { Menu, Search, Bell, LogOut, Settings as SettingsIcon, User, PlusCircle, Building2 } from 'lucide-react';
 
 export default function Header({ 
   toggleSidebar, 
@@ -7,10 +7,13 @@ export default function Header({
   searchQuery, 
   setSearchQuery,
   onLogout,
-  currentUser
+  currentUser,
+  onNavigate
 }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const isRegistrar = currentUser?.role === 'Registrar';
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -34,7 +37,7 @@ export default function Header({
           <input
             type="text"
             className="search-input"
-            placeholder="Search documents, titles, or keywords..."
+            placeholder={isRegistrar ? "Search student ID, name, or document..." : "Search repository files, policies, or memos..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -43,6 +46,16 @@ export default function Header({
       </div>
 
       <div className="header-right">
+        {/* Quick Action Button */}
+        {onNavigate && (
+          <button
+            className="btn-header-action"
+            onClick={() => onNavigate(isRegistrar ? 'requests' : 'upload')}
+          >
+            <PlusCircle size={15} />
+            <span>{isRegistrar ? 'Log Student Request' : 'Ingest Document'}</span>
+          </button>
+        )}
         <div style={{ position: 'relative' }}>
           <button 
             className="bell-btn" 

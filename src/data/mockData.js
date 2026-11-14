@@ -1,9 +1,25 @@
 export const initialStats = {
   totalDocuments: "2,504",
   categories: "12",
-  users: "156",
-  storageUsed: "5.2 GB"
+  storageUsed: "5.2 GB",
+  storageQuota: "20.0 GB",
+  backupStatus: "Operational"
 };
+
+export const registrarStats = {
+  totalRequests: "148",
+  pendingRequests: "18",
+  processingRequests: "12",
+  releasedToday: "24"
+};
+
+export const requestDistributionData = [
+  { name: "Transcript of Records (TOR)", percentage: 38, color: "#0e8345", count: 56 },
+  { name: "Certificate of Good Moral", percentage: 26, color: "#e5a93b", count: 39 },
+  { name: "Certification of Grades", percentage: 18, color: "#0284c7", count: 27 },
+  { name: "Honorable Dismissal", percentage: 10, color: "#8b5cf6", count: 15 },
+  { name: "Diploma / CAV Authentication", percentage: 8, color: "#f43f5e", count: 11 },
+];
 
 export const distributionData = [
   { name: "Policies", percentage: 25, color: "#10b981", count: 625 },
@@ -206,4 +222,85 @@ export const userGuideTopics = [
   { id: "admin-functions", title: "Administrator Functions" },
   { id: "troubleshooting", title: "Troubleshooting" },
   { id: "faqs", title: "FAQs" }
+];
+
+export const initialStudentRequests = [
+  {
+    id: "REQ-2026-001",
+    studentId: "2022-0142",
+    studentName: "Maria Sophia Santos",
+    program: "BS Information Technology",
+    yearLevel: "4th Year",
+    documentType: "Official Transcript of Records (TOR)",
+    purpose: "Employment Application (SM Megamall IT)",
+    dateFiled: "Nov 12, 2026",
+    status: "Pending",
+    priority: "Urgent",
+    contact: "0917-234-5678"
+  },
+  {
+    id: "REQ-2026-002",
+    studentId: "2021-0981",
+    studentName: "Juan Carlos Dela Cruz",
+    program: "BS Civil Engineering",
+    yearLevel: "Graduated (Batch 2025)",
+    documentType: "Certificate of Good Moral Character",
+    purpose: "PRC Board Examination Requirements",
+    dateFiled: "Nov 11, 2026",
+    status: "Processing",
+    priority: "Standard",
+    contact: "0928-876-5432"
+  },
+  {
+    id: "REQ-2026-003",
+    studentId: "2023-0442",
+    studentName: "Elena Grace Gomez",
+    program: "BSED Major in English",
+    yearLevel: "3rd Year",
+    documentType: "Certification of Grades",
+    purpose: "CHED Scholarship Renewal",
+    dateFiled: "Nov 10, 2026",
+    status: "Ready for Release",
+    priority: "Standard",
+    contact: "0919-456-7890"
+  },
+  {
+    id: "REQ-2026-004",
+    studentId: "2020-0312",
+    studentName: "Mark Lester Villanueva",
+    program: "BS Hospitality Management",
+    yearLevel: "Graduated",
+    documentType: "Honorable Dismissal & Transfer Credential",
+    purpose: "Transfer to Technological University of the Philippines",
+    dateFiled: "Nov 09, 2026",
+    status: "Released",
+    priority: "Standard",
+    contact: "0933-112-2334"
+  },
+  {
+    id: "REQ-2026-005",
+    studentId: "2024-0019",
+    studentName: "Angela Nicole Tan",
+    program: "BS Criminology",
+    yearLevel: "2nd Year",
+    documentType: "Certificate of Enrollment",
+    purpose: "Pantawid Pamilyang Pilipino Program (4Ps) Requirement",
+    dateFiled: "Nov 08, 2026",
+    status: "Released",
+    priority: "Standard",
+    contact: "0945-889-1234"
+  },
+  {
+    id: "REQ-2026-006",
+    studentId: "2021-0554",
+    studentName: "Rafael Dominic Bautista",
+    program: "BS Industrial Technology",
+    yearLevel: "4th Year",
+    documentType: "Official Transcript of Records (TOR)",
+    purpose: "Overseas Employment (POEA/DMW)",
+    dateFiled: "Nov 13, 2026",
+    status: "Pending",
+    priority: "Urgent",
+    contact: "0908-776-5544"
+  }
 ];

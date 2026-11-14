@@ -4,33 +4,43 @@
 export const initialAccounts = [
   {
     id: 1,
-    username: 'admin',
-    email: 'admin@chmsu.edu.ph',
+    username: 'records',
+    email: 'records@chmsu.edu.ph',
     password: 'admin123',
-    name: 'John Doe',
-    role: 'Administrator',
-    department: 'Management Information System',
-    avatar: 'JD'
+    name: 'Records Management Officer',
+    role: 'Records Office',
+    officeName: 'Records Management Office',
+    department: 'University Archives & Records Section',
+    avatar: 'RM',
+    canManageStorage: true,
+    canProcessRequests: false
   },
   {
     id: 2,
-    username: 'r.santos',
-    email: 'r.santos@chmsu.edu.ph',
-    password: 'password123',
-    name: 'R. Santos',
-    role: 'Faculty Researcher',
-    department: 'College of Arts & Sciences',
-    avatar: 'RS'
+    username: 'registrar',
+    email: 'registrar@chmsu.edu.ph',
+    password: 'registrar123',
+    name: 'University Registrar Officer',
+    role: 'Registrar',
+    officeName: 'Office of the University Registrar',
+    department: 'Student Academic Records & Admissions',
+    avatar: 'UR',
+    canManageStorage: false,
+    canProcessRequests: true
   },
+  // Support 'admin' as an alias for the Records Office
   {
     id: 3,
-    username: 'l.delacruz',
-    email: 'l.delacruz@chmsu.edu.ph',
-    password: 'password123',
-    name: 'L. Dela Cruz',
-    role: 'Department Reviewer',
-    department: 'Office of Student Affairs',
-    avatar: 'LD'
+    username: 'admin',
+    email: 'admin@chmsu.edu.ph',
+    password: 'admin123',
+    name: 'Records Administrator',
+    role: 'Records Office',
+    officeName: 'Records Management Office',
+    department: 'Management Information System / Records',
+    avatar: 'AD',
+    canManageStorage: true,
+    canProcessRequests: false
   }
 ];
 
@@ -38,7 +48,11 @@ export function getAccounts() {
   const stored = localStorage.getItem('chmsu_accounts');
   if (stored) {
     try {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // Ensure the 2 dedicated accounts exist
+      if (parsed.some((a) => a.username === 'registrar')) {
+        return parsed;
+      }
     } catch (e) {
       console.error('Failed to parse chmsu_accounts, resetting to default.', e);
     }
@@ -66,14 +80,15 @@ export function authenticateUser(identifier, password) {
   if (!user) {
     return {
       success: false,
-      message: 'Account not found. Please check your username or email.'
+      message: 'Account not found. Use "records" or "registrar".'
     };
   }
 
   if (user.password !== password) {
+    const hint = user.username === 'registrar' ? 'registrar123' : 'admin123';
     return {
       success: false,
-      message: 'Incorrect password. Hint: default password is admin123'
+      message: `Incorrect password. Hint: default password is ${hint}`
     };
   }
 
@@ -84,8 +99,11 @@ export function authenticateUser(identifier, password) {
     email: user.email,
     name: user.name,
     role: user.role,
+    officeName: user.officeName,
     department: user.department,
-    avatar: user.avatar || user.name.slice(0, 2).toUpperCase()
+    avatar: user.avatar || user.name.slice(0, 2).toUpperCase(),
+    canManageStorage: user.canManageStorage,
+    canProcessRequests: user.canProcessRequests
   };
 
   setCurrentSession(safeUser);
