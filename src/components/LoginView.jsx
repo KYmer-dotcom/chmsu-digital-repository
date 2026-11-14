@@ -1,15 +1,31 @@
 import React, { useState } from 'react';
-import { User, Lock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { User, Lock, Eye, EyeOff, ShieldCheck, AlertCircle } from 'lucide-react';
+import { authenticateUser } from '../data/accountsDb';
 
 export default function LoginView({ onLoginSuccess }) {
-  const [username, setUsername] = useState('john.doe@chmsu.edu.ph');
-  const [password, setPassword] = useState('••••••••••••');
+  const [username, setUsername] = useState('admin');
+  const [password, setPassword] = useState('admin123');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLoginSuccess();
+    setErrorMessage('');
+
+    const result = authenticateUser(username, password);
+    if (result.success) {
+      onLoginSuccess(result.user);
+    } else {
+      setErrorMessage(result.message);
+    }
+  };
+
+  const handleSsoLogin = () => {
+    const result = authenticateUser('admin', 'admin123');
+    if (result.success) {
+      onLoginSuccess(result.user);
+    }
   };
 
   return (
@@ -40,6 +56,14 @@ export default function LoginView({ onLoginSuccess }) {
           <h2 className="form-heading">Welcome</h2>
           <p className="form-subheading">Sign in to access the CHMSU Digital Repository</p>
 
+          {/* Error Alert Banner */}
+          {errorMessage && (
+            <div className="v2-error-banner">
+              <AlertCircle size={16} className="v2-error-icon" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="login-v2-form">
             {/* Username / Institutional Email Field with Left Icon */}
             <div className="v2-input-group">
@@ -47,10 +71,13 @@ export default function LoginView({ onLoginSuccess }) {
                 <User size={18} className="v2-input-icon-left" />
                 <input
                   type="text"
-                  className="v2-input-field has-left-icon"
-                  placeholder="Username or Institutional Email"
+                  className={`v2-input-field has-left-icon ${errorMessage ? 'has-error' : ''}`}
+                  placeholder="Username (e.g. admin)"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    if (errorMessage) setErrorMessage('');
+                  }}
                   required
                 />
               </div>
@@ -62,10 +89,13 @@ export default function LoginView({ onLoginSuccess }) {
                 <Lock size={18} className="v2-input-icon-left" />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  className="v2-input-field has-left-icon has-right-icon"
+                  className={`v2-input-field has-left-icon has-right-icon ${errorMessage ? 'has-error' : ''}`}
                   placeholder="Password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errorMessage) setErrorMessage('');
+                  }}
                   required
                 />
                 <button
@@ -94,7 +124,7 @@ export default function LoginView({ onLoginSuccess }) {
                 className="v2-forgot-link"
                 onClick={(e) => { 
                   e.preventDefault(); 
-                  alert('A recovery link has been sent to your registered @chmsu.edu.ph institutional email.'); 
+                  alert('Default credentials: Username "admin" and password "admin123"'); 
                 }}
               >
                 Forgot password?
@@ -115,7 +145,7 @@ export default function LoginView({ onLoginSuccess }) {
             <button 
               type="button" 
               className="v2-btn-sso"
-              onClick={onLoginSuccess}
+              onClick={handleSsoLogin}
             >
               <ShieldCheck size={18} color="#10b981" />
               <span>Sign in with CHMSU Account</span>

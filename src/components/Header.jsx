@@ -6,7 +6,8 @@ export default function Header({
   onSearch, 
   searchQuery, 
   setSearchQuery,
-  onLogout 
+  onLogout,
+  currentUser
 }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -86,10 +87,10 @@ export default function Header({
             className="user-profile" 
             onClick={() => setShowUserMenu(!showUserMenu)}
           >
-            <div className="user-avatar">JD</div>
+            <div className="user-avatar">{currentUser?.avatar || 'AD'}</div>
             <div className="user-info">
-              <div className="user-name">John Doe</div>
-              <div className="user-role">Administrator</div>
+              <div className="user-name">{currentUser?.name || 'Administrator'}</div>
+              <div className="user-role">{currentUser?.role || 'Repository Administrator'}</div>
             </div>
           </div>
 

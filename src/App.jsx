@@ -14,10 +14,16 @@ import UsersView from './components/UsersView';
 import SettingsView from './components/SettingsView';
 import DocumentModal from './components/DocumentModal';
 import { initialDocuments, initialCategories } from './data/mockData';
+import { getCurrentSession, clearCurrentSession, initialAccounts } from './data/accountsDb';
 import { CheckCircle2 } from 'lucide-react';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [currentUser, setCurrentUser] = useState(() => {
+    return getCurrentSession() || initialAccounts[0];
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return !!getCurrentSession();
+  });
   const [currentView, setCurrentView] = useState('dashboard');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -96,15 +102,24 @@ export default function App() {
     setCurrentView('documents');
   };
 
+  const handleLoginSuccess = (user) => {
+    if (user) setCurrentUser(user);
+    setIsAuthenticated(true);
+    setCurrentView('dashboard');
+    showToast(`Welcome back, ${user?.name || user?.username || 'Admin'}!`);
+  };
+
+  const handleLogout = () => {
+    clearCurrentSession();
+    setIsAuthenticated(false);
+    showToast('You have signed out.');
+  };
+
   // If user is on the Login Screen
   if (!isAuthenticated) {
     return (
       <LoginView 
-        onLoginSuccess={() => {
-          setIsAuthenticated(true);
-          setCurrentView('dashboard');
-          showToast('Welcome back, John Doe!');
-        }} 
+        onLoginSuccess={handleLoginSuccess} 
       />
     );
   }
@@ -131,7 +146,7 @@ export default function App() {
         currentView={currentView}
         setCurrentView={setCurrentView}
         isCollapsed={isSidebarCollapsed}
-        onShowLogin={() => setIsAuthenticated(false)}
+        onShowLogin={handleLogout}
       />
 
       {/* Main Workspace */}
@@ -141,10 +156,8 @@ export default function App() {
           onSearch={handleGlobalSearch}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          onLogout={() => {
-            setIsAuthenticated(false);
-            showToast('You have signed out.');
-          }}
+          onLogout={handleLogout}
+          currentUser={currentUser}
         />
 
         <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>

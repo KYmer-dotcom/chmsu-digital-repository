@@ -1219,6 +1219,32 @@ button, input, select, textarea {
   line-height: 1.4;
 }
 
+/* Error Banner & Input Error State */
+.v2-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  margin-bottom: 16px;
+  line-height: 1.35;
+  animation: fadeInDown 0.15s ease-out;
+}
+
+.v2-error-icon {
+  flex-shrink: 0;
+  color: #f87171;
+}
+
+.v2-input-field.has-error {
+  border-color: #ef4444 !important;
+  background-color: #fff5f5 !important;
+}
+
 .login-v2-form {
   display: flex;
   flex-direction: column;
