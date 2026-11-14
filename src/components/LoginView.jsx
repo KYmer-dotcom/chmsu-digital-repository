@@ -1,27 +1,11 @@
 import React, { useState } from 'react';
-import { User, Lock, Eye, EyeOff, ChevronDown, Check, ShieldCheck, ArrowRight } from 'lucide-react';
+import { User, Lock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 
 export default function LoginView({ onLoginSuccess }) {
-  const roles = [
-    { label: 'Repository Administrator', defaultUser: 'john.doe@chmsu.edu.ph' },
-    { label: 'Faculty Researcher', defaultUser: 'r.santos@chmsu.edu.ph' },
-    { label: 'Department Reviewer', defaultUser: 'l.delacruz@chmsu.edu.ph' },
-    { label: 'University Archivist', defaultUser: 'e.villanueva@chmsu.edu.ph' },
-    { label: 'Guest / Student Access', defaultUser: 'student.chmsu@chmsu.edu.ph' }
-  ];
-
-  const [selectedRole, setSelectedRole] = useState(roles[0]);
-  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
   const [username, setUsername] = useState('john.doe@chmsu.edu.ph');
   const [password, setPassword] = useState('••••••••••••');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-
-  const handleRoleChange = (role) => {
-    setSelectedRole(role);
-    setUsername(role.defaultUser);
-    setIsRoleDropdownOpen(false);
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,49 +20,6 @@ export default function LoginView({ onLoginSuccess }) {
         style={{ backgroundImage: `url('./carloshiladotalisay.jpg')` }}
       />
       <div className="login-v2-backdrop-overlay" />
-
-      {/* Top Header Bar / Role Switcher & Bypass */}
-      <div className="login-v2-topbar">
-        {/* Direct to Dashboard Bypass */}
-        <button 
-          className="login-v2-bypass-btn"
-          onClick={onLoginSuccess}
-          title="Direct to Repository Dashboard"
-        >
-          Direct to Dashboard <ArrowRight size={14} />
-        </button>
-
-        {/* Role Selector Pill */}
-        <div className="login-v2-role-wrapper">
-          <button 
-            type="button" 
-            className="login-v2-role-badge"
-            onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
-          >
-            <User size={15} className="role-icon" />
-            <span className="role-tag">ROLE:</span>
-            <span className="role-name">{selectedRole.label}</span>
-            <ChevronDown size={14} className={`role-chevron ${isRoleDropdownOpen ? 'rotated' : ''}`} />
-          </button>
-
-          {isRoleDropdownOpen && (
-            <div className="login-v2-role-menu">
-              <div className="role-menu-header">Repository Role</div>
-              {roles.map((r) => (
-                <button
-                  key={r.label}
-                  type="button"
-                  className={`role-menu-item ${selectedRole.label === r.label ? 'active' : ''}`}
-                  onClick={() => handleRoleChange(r)}
-                >
-                  <span>{r.label}</span>
-                  {selectedRole.label === r.label && <Check size={14} color="#e5a93b" />}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
 
       {/* Center Floating Authentication Card */}
       <div className="login-v2-card">
