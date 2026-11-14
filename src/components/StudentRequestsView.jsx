@@ -9,22 +9,28 @@ import {
   FileText, 
   Download, 
   Printer, 
-  X,
-  Filter,
-  Check,
-  ChevronRight
+  X, 
+  Filter, 
+  Check, 
+  ChevronRight,
+  ShieldCheck,
+  CheckSquare,
+  FileCheck,
+  Building2
 } from 'lucide-react';
 
 export default function StudentRequestsView({ 
   requests, 
+  documents = [],
   onUpdateRequestStatus, 
-  onAddRequest,
+  onAddRequest, 
   showToast 
 }) {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRequestForSlip, setSelectedRequestForSlip] = useState(null);
+  const [verifyingRequest, setVerifyingRequest] = useState(null);
 
   // New Request Form State
   const [newStudentId, setNewStudentId] = useState('');
@@ -224,10 +230,36 @@ export default function StudentRequestsView({
                       {req.dateFiled}
                     </td>
                     <td>
-                      {getStatusBadge(req.status)}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        {getStatusBadge(req.status)}
+                        {req.verified && (
+                          <span style={{ fontSize: '0.72rem', color: '#047857', display: 'inline-flex', alignItems: 'center', gap: '3px', fontWeight: 600 }}>
+                            <ShieldCheck size={12} color="#10b981" /> Verified
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <div className="action-button-group">
+                        {/* Cross-Office Verification Button */}
+                        <button 
+                          className="btn-status-action"
+                          style={{
+                            background: req.verified ? '#f0fdf4' : '#f8fafc',
+                            color: req.verified ? '#15803d' : '#0e8345',
+                            border: req.verified ? '1px solid #86efac' : '1px solid #cbd5e1',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontWeight: 600
+                          }}
+                          onClick={() => setVerifyingRequest(req)}
+                          title="Verify student records against repository archives"
+                        >
+                          <ShieldCheck size={14} color={req.verified ? '#16a34a' : '#0e8345'} />
+                          <span>{req.verified ? 'Verified' : 'Verify'}</span>
+                        </button>
+
                         {req.status === 'Pending' && (
                           <button 
                             className="btn-status-action btn-process"
@@ -460,7 +492,60 @@ export default function StudentRequestsView({
                 <div><strong>Purpose:</strong> {selectedRequestForSlip.purpose}</div>
               </div>
 
-              <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px dashed #cbd5e1', display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b' }}>
+              {/* Verification Clearance Badge */}
+              {selectedRequestForSlip.verified ? (
+                <div style={{
+                  margin: '12px 0',
+                  padding: '10px 14px',
+                  background: '#ecfdf5',
+                  border: '1px solid #10b981',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}>
+                  <ShieldCheck size={26} color="#059669" style={{ flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '0.8rem', color: '#065f46', textTransform: 'uppercase' }}>
+                      Official Archival Verification Clearance
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#047857' }}>
+                      Verified against CHMSU Digital Repository • Eligible for Official Release
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
+                      Cleared on: {selectedRequestForSlip.verifiedAt || 'Nov 14, 2026'} • Registrar Officer
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  margin: '12px 0',
+                  padding: '8px 12px',
+                  background: '#fffbeb',
+                  border: '1px solid #fde68a',
+                  borderRadius: '6px',
+                  fontSize: '0.75rem',
+                  color: '#92400e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  <AlertCircle size={14} color="#d97706" />
+                  <span>Pending archival clearance check by Registrar.</span>
+                </div>
+              )}
+
+              {/* Barcode representation */}
+              <div style={{ textAlign: 'center', margin: '14px 0 6px', padding: '8px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '6px' }}>
+                <div style={{ fontFamily: 'monospace', letterSpacing: '5px', fontWeight: 700, fontSize: '0.95rem', color: '#0f172a' }}>
+                  ||| | ||||| || |||| |||| | |||
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b', letterSpacing: '1px' }}>
+                  * {selectedRequestForSlip.id} *
+                </div>
+              </div>
+
+              <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px dashed #cbd5e1', display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b' }}>
                 <div>
                   <div style={{ borderBottom: '1px solid #94a3b8', width: '140px', height: '24px' }}></div>
                   <div style={{ marginTop: '4px' }}>Student Signature</div>
@@ -490,6 +575,136 @@ export default function StudentRequestsView({
                 style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
               >
                 <Printer size={15} /> Print Slip
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Cross-Office Archival Verification */}
+      {verifyingRequest && (
+        <div className="modal-backdrop">
+          <div className="modal-card" style={{ maxWidth: '640px', background: '#ffffff' }}>
+            <div className="modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span className="pdf-badge" style={{ background: '#ecfdf5', color: '#10b981' }}>
+                  <ShieldCheck size={20} />
+                </span>
+                <div>
+                  <h3 className="modal-title">Repository Archival Verification</h3>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                    Cross-Office Validation • Records Office ⇄ Registrar Pipeline
+                  </span>
+                </div>
+              </div>
+              <button 
+                className="modal-close-btn"
+                onClick={() => setVerifyingRequest(null)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="modal-body">
+              {/* Student Target Summary */}
+              <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '0.84rem' }}>
+                  <div><strong>Student Name:</strong> {verifyingRequest.studentName}</div>
+                  <div><strong>Student ID:</strong> {verifyingRequest.studentId}</div>
+                  <div><strong>Degree Program:</strong> {verifyingRequest.program}</div>
+                  <div><strong>Requested File:</strong> {verifyingRequest.documentType}</div>
+                </div>
+              </div>
+
+              {/* Matched Archival Documents */}
+              <div style={{ marginBottom: '16px' }}>
+                <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Building2 size={15} color="#0e8345" /> Matched Institutional Records in Repository Archive
+                </h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {documents.filter((d) => {
+                    const p = (verifyingRequest.program || '').toLowerCase();
+                    const dept = (d.department || '').toLowerCase();
+                    const title = (d.title || '').toLowerCase();
+                    if (p.includes('engineering') && (dept.includes('engineering') || title.includes('engineering'))) return true;
+                    if (p.includes('industrial') && (dept.includes('industrial') || title.includes('trades'))) return true;
+                    if ((p.includes('english') || p.includes('education')) && (dept.includes('education') || title.includes('teacher'))) return true;
+                    if ((p.includes('hospitality') || p.includes('accountancy')) && (dept.includes('business') || dept.includes('cbma'))) return true;
+                    if (dept.includes('registrar') || title.includes('transcript') || title.includes('handbook')) return true;
+                    return false;
+                  }).slice(0, 3).map((doc) => (
+                    <div 
+                      key={doc.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '10px 12px',
+                        background: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '6px'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <FileCheck size={18} color="#10b981" />
+                        <div>
+                          <div style={{ fontSize: '0.84rem', fontWeight: 600, color: '#1e293b' }}>{doc.title}</div>
+                          <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{doc.department} • {doc.category} ({doc.year})</div>
+                        </div>
+                      </div>
+                      <span style={{ fontSize: '0.72rem', background: '#ecfdf5', color: '#047857', padding: '3px 8px', borderRadius: '4px', fontWeight: 600 }}>
+                        Archived Record
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Verification Checklist */}
+              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '14px 16px' }}>
+                <h4 style={{ fontSize: '0.84rem', fontWeight: 700, color: '#166534', marginBottom: '8px' }}>
+                  Registrar Verification Criteria
+                </h4>
+                <div style={{ fontSize: '0.8rem', color: '#14532d', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <CheckSquare size={16} color="#15803d" />
+                    <span>Degree program & curriculum checklist confirmed in CHMSU archive</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <CheckSquare size={16} color="#15803d" />
+                    <span>Grading standards & retention schedule compliant (NAP Standard)</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <CheckSquare size={16} color="#15803d" />
+                    <span>No outstanding university liabilities or clearance flags</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer" style={{ borderTop: '1px solid #e2e8f0', padding: '16px 24px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button 
+                type="button" 
+                className="btn-outline"
+                onClick={() => setVerifyingRequest(null)}
+              >
+                Cancel
+              </button>
+              <button 
+                type="button" 
+                className="btn-primary"
+                onClick={() => {
+                  onUpdateRequestStatus(verifyingRequest.id, 'Ready for Release', {
+                    verified: true,
+                    verifiedAt: 'Nov 14, 2026',
+                    verifiedBy: 'Office of the University Registrar'
+                  });
+                  showToast(`Archival record verified! Request ${verifyingRequest.id} marked Ready for Release.`);
+                  setVerifyingRequest(null);
+                }}
+                style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+              >
+                <ShieldCheck size={16} /> Confirm Verification & Mark Ready
               </button>
             </div>
           </div>

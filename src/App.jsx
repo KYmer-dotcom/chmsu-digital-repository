@@ -72,9 +72,9 @@ export default function App() {
     localStorage.setItem('chmsu_student_requests', JSON.stringify(reqs));
   };
 
-  const handleUpdateRequestStatus = (id, newStatus) => {
+  const handleUpdateRequestStatus = (id, newStatus, extraData = {}) => {
     const updated = studentRequests.map((r) => 
-      r.id === id ? { ...r, status: newStatus } : r
+      r.id === id ? { ...r, status: newStatus, ...extraData } : r
     );
     updateStudentRequests(updated);
   };
@@ -210,6 +210,7 @@ export default function App() {
           {currentView === 'requests' && (
             <StudentRequestsView 
               requests={studentRequests}
+              documents={documents}
               onUpdateRequestStatus={handleUpdateRequestStatus}
               onAddRequest={handleAddRequest}
               showToast={showToast}
@@ -269,7 +270,12 @@ export default function App() {
           )}
 
           {currentView === 'reports' && (
-            <ReportsView showToast={showToast} />
+            <ReportsView 
+              currentUser={currentUser}
+              studentRequests={studentRequests}
+              documents={documents}
+              showToast={showToast} 
+            />
           )}
 
           {currentView === 'users' && (
