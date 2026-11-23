@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import LoginView from './components/LoginView';
@@ -17,6 +17,7 @@ import StudentRequestsView from './components/StudentRequestsView';
 import { initialDocuments, initialCategories, initialStudentRequests } from './data/mockData';
 import { getCurrentSession, clearCurrentSession, initialAccounts } from './data/accountsDb';
 import { CheckCircle2 } from 'lucide-react';
+import { api } from './services/api';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -28,6 +29,7 @@ export default function App() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isDbConnected, setIsDbConnected] = useState(false);
   
   // Data State with localStorage persistence & automatic schema upgrade
   const [documents, setDocuments] = useState(() => {
@@ -72,16 +74,41 @@ export default function App() {
     localStorage.setItem('chmsu_student_requests', JSON.stringify(reqs));
   };
 
+  // SQLite Database Health Check and Sync on Mount
+  useEffect(() => {
+    let isMounted = true;
+    async function syncWithSQLiteDatabase() {
+      const health = await api.checkHealth();
+      if (health.isConnected && isMounted) {
+        setIsDbConnected(true);
+        const [dbDocs, dbReqs, dbCats] = await Promise.all([
+          api.getDocuments(),
+          api.getStudentRequests(),
+          api.getCategories()
+        ]);
+        if (dbDocs && dbDocs.length > 0 && isMounted) updateDocuments(dbDocs);
+        if (dbReqs && dbReqs.length > 0 && isMounted) updateStudentRequests(dbReqs);
+        if (dbCats && dbCats.length > 0 && isMounted) updateCategories(dbCats);
+      }
+    }
+    syncWithSQLiteDatabase();
+    return () => { isMounted = false; };
+  }, []);
+
   const handleUpdateRequestStatus = (id, newStatus, extraData = {}) => {
     const updated = studentRequests.map((r) => 
       r.id === id ? { ...r, status: newStatus, ...extraData } : r
     );
     updateStudentRequests(updated);
+    // Sync to SQLite database
+    api.updateRequestStatus(id, newStatus, extraData);
   };
 
   const handleAddRequest = (newReq) => {
     const updated = [newReq, ...studentRequests];
     updateStudentRequests(updated);
+    // Sync to SQLite database
+    api.createStudentRequest(newReq);
   };
 
   // Toast notifications
@@ -104,12 +131,16 @@ export default function App() {
   const handleUploadSuccess = (newDoc) => {
     const updated = [newDoc, ...documents];
     updateDocuments(updated);
+    // Sync to SQLite database
+    api.createDocument(newDoc);
     setCurrentView('documents');
   };
 
   const handleDeleteDocument = (id) => {
     const updated = documents.filter((d) => d.id !== id);
     updateDocuments(updated);
+    // Sync to SQLite database
+    api.deleteDocument(id);
   };
 
   const handleAddCategory = (newCat) => {
@@ -195,6 +226,7 @@ export default function App() {
           onLogout={handleLogout}
           onSwitchOffice={handleSwitchOffice}
           currentUser={currentUser}
+          isDbConnected={isDbConnected}
           onNavigate={setCurrentView}
         />
 

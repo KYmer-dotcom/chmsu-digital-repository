@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, Search, Bell, LogOut, ChevronDown, ArrowLeftRight } from 'lucide-react';
+import { Menu, Search, Bell, LogOut, ChevronDown, ArrowLeftRight, Database } from 'lucide-react';
 
 export default function Header({ 
   toggleSidebar, 
@@ -8,7 +8,8 @@ export default function Header({
   setSearchQuery,
   onLogout,
   onSwitchOffice,
-  currentUser
+  currentUser,
+  isDbConnected
 }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -53,8 +54,28 @@ export default function Header({
         </div>
       </div>
 
-      {/* Right: Notifications & Office Account Only */}
-      <div className="header-right">
+      {/* Right: Notifications, Database Status & Office Account */}
+      <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        {/* Live Database Connection Badge */}
+        <div 
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '0.74rem',
+            padding: '4px 10px',
+            borderRadius: '20px',
+            background: isDbConnected ? '#ecfdf5' : '#f8fafc',
+            border: isDbConnected ? '1px solid #a7f3d0' : '1px solid #e2e8f0',
+            color: isDbConnected ? '#065f46' : '#64748b',
+            fontWeight: 600
+          }}
+          title={isDbConnected ? 'Connected to local SQLite database (server/chmsu_repository.sqlite)' : 'Operating in Cached Offline Mode'}
+        >
+          <Database size={13} color={isDbConnected ? '#10b981' : '#94a3b8'} />
+          <span>{isDbConnected ? 'SQLite Connected' : 'Local Cache'}</span>
+        </div>
+
         {/* Notifications */}
         <div style={{ position: 'relative' }}>
           <button 
