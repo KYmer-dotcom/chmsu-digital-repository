@@ -1,25 +1,25 @@
 import React from 'react';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Download, 
-  Calendar, 
-  Clock, 
-  CheckCircle2, 
-  FileText, 
-  Building2, 
-  HardDrive, 
+import {
+  BarChart3,
+  TrendingUp,
+  Download,
+  Calendar,
+  Clock,
+  CheckCircle2,
+  FileText,
+  Building2,
+  HardDrive,
   ShieldCheck,
   Printer
 } from 'lucide-react';
 import DonutChart from './DonutChart';
 import { distributionData, requestDistributionData } from '../data/mockData';
 
-export default function ReportsView({ 
-  currentUser, 
-  studentRequests = [], 
-  documents = [], 
-  showToast 
+export default function ReportsView({
+  currentUser,
+  studentRequests = [],
+  documents = [],
+  showToast
 }) {
   const isRegistrar = currentUser?.role === 'Registrar';
 
@@ -98,7 +98,7 @@ export default function ReportsView({
             </p>
           </div>
 
-          <button 
+          <button
             className="btn-primary"
             onClick={handleExportRegistrarCSV}
             style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
@@ -245,7 +245,7 @@ export default function ReportsView({
           </p>
         </div>
 
-        <button 
+        <button
           className="btn-primary"
           onClick={handleExportRecordsCSV}
           style={{ display: 'flex', alignItems: 'center', gap: '8px' }}

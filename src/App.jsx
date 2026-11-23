@@ -129,13 +129,6 @@ export default function App() {
     setCurrentView('documents');
   };
 
-  // Simulate Data-Loss Incident
-  const handleSimulateDataLoss = () => {
-    updateDocuments([]);
-    showToast('CRITICAL INCIDENT: All documents wiped from repository!');
-    setCurrentView('documents');
-  };
-
   const handleLoginSuccess = (user) => {
     if (user) setCurrentUser(user);
     setIsAuthenticated(true);
@@ -260,7 +253,6 @@ export default function App() {
               documents={documents}
               categories={categories}
               onRestoreState={handleRestoreState}
-              onSimulateDataLoss={handleSimulateDataLoss}
               showToast={showToast}
             />
           )}

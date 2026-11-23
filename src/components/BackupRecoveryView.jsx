@@ -1,12 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { Database, Download, CheckCircle, RefreshCw, UploadCloud, AlertTriangle, RotateCcw } from 'lucide-react';
+import { Database, Download, CheckCircle, RefreshCw, UploadCloud, RotateCcw } from 'lucide-react';
 import { backupHistory as initialBackups } from '../data/mockData';
 
 export default function BackupRecoveryView({ 
   documents, 
   categories, 
   onRestoreState, 
-  onSimulateDataLoss, 
   showToast 
 }) {
   const [activeTab, setActiveTab] = useState('backup');
@@ -122,21 +121,11 @@ export default function BackupRecoveryView({
 
   return (
     <div className="page-content">
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+      <div className="page-header">
         <div>
           <h2 className="page-title">Backup & Recovery</h2>
           <p className="page-subtitle">Manage system backups, export snapshots, and recover records after data loss</p>
         </div>
-
-        {/* Disaster Incident Simulation Button */}
-        <button 
-          className="btn-outline" 
-          onClick={onSimulateDataLoss}
-          style={{ borderColor: '#ef4444', color: '#b91c1c', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
-          title="Wipe repository records to test incident recovery"
-        >
-          <AlertTriangle size={16} /> Simulate Data Loss Incident
-        </button>
       </div>
 
       {/* Tabs */}
