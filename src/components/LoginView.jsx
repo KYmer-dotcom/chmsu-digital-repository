@@ -65,6 +65,52 @@ export default function LoginView({ onLoginSuccess }) {
           )}
 
           <form onSubmit={handleSubmit} className="login-v2-form">
+            {/* Quick Role Selection Presets */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setUsername('records');
+                  setPassword('admin123');
+                }}
+                style={{
+                  flex: 1,
+                  padding: '8px 10px',
+                  borderRadius: '6px',
+                  border: username === 'records' || username === 'admin' ? '1.5px solid #10b981' : '1px solid #334155',
+                  background: username === 'records' || username === 'admin' ? '#0f382c' : '#1e293b',
+                  color: '#ffffff',
+                  fontSize: '0.78rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  textAlign: 'center'
+                }}
+              >
+                🏛️ Records Office
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setUsername('registrar');
+                  setPassword('registrar123');
+                }}
+                style={{
+                  flex: 1,
+                  padding: '8px 10px',
+                  borderRadius: '6px',
+                  border: username === 'registrar' ? '1.5px solid #10b981' : '1px solid #334155',
+                  background: username === 'registrar' ? '#0f382c' : '#1e293b',
+                  color: '#ffffff',
+                  fontSize: '0.78rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  textAlign: 'center'
+                }}
+              >
+                🎓 Registrar Office
+              </button>
+            </div>
+
             {/* Username / Institutional Email Field with Left Icon */}
             <div className="v2-input-group">
               <div className="v2-input-with-icon">

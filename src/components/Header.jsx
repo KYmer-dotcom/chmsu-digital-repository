@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, Search, Bell, LogOut, ChevronDown } from 'lucide-react';
+import { Menu, Search, Bell, LogOut, ChevronDown, ArrowLeftRight } from 'lucide-react';
 
 export default function Header({ 
   toggleSidebar, 
@@ -7,6 +7,7 @@ export default function Header({
   searchQuery, 
   setSearchQuery,
   onLogout,
+  onSwitchOffice,
   currentUser
 }) {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -106,6 +107,20 @@ export default function Header({
                 <div className="user-menu-email">{isRegistrar ? 'registrar@chmsu.edu.ph' : 'records@chmsu.edu.ph'}</div>
               </div>
               <div className="user-menu-divider" />
+              {onSwitchOffice && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onSwitchOffice(isRegistrar ? 'records' : 'registrar');
+                    setShowUserMenu(false);
+                  }}
+                  className="user-menu-action-btn"
+                  style={{ color: '#0e8345', fontWeight: 600 }}
+                >
+                  <ArrowLeftRight size={15} />
+                  <span>Switch to {isRegistrar ? 'Records Office' : 'Registrar Office'}</span>
+                </button>
+              )}
               <button 
                 onClick={onLogout}
                 className="user-menu-action-btn logout-danger"

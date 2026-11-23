@@ -142,6 +142,14 @@ export default function App() {
     showToast('You have signed out.');
   };
 
+  const handleSwitchOffice = (targetUsername) => {
+    const targetUser = initialAccounts.find(acc => acc.username === targetUsername) || initialAccounts[0];
+    setCurrentUser(targetUser);
+    localStorage.setItem('chmsu_current_session', JSON.stringify(targetUser));
+    setCurrentView('dashboard');
+    showToast(`Switched workspace to ${targetUser.name}`);
+  };
+
   // If user is on the Login Screen
   if (!isAuthenticated) {
     return (
@@ -185,6 +193,7 @@ export default function App() {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           onLogout={handleLogout}
+          onSwitchOffice={handleSwitchOffice}
           currentUser={currentUser}
           onNavigate={setCurrentView}
         />
